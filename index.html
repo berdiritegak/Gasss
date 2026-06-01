@@ -1,0 +1,136 @@
+const PASSWORD = "revan123";
+
+function login(){
+if(document.getElementById("pass").value===PASSWORD){
+document.getElementById("login").style.display="none";
+document.getElementById("app").style.display="block";
+renderPage(1);
+}else{
+alert("Password Salah");
+}
+}
+
+const videos=[];
+
+for(let i=1;i<=1000;i++){
+videos.push({
+title:"Video "+i,
+file:"videos/video"+i+".mp4",
+thumb:"thumbs/thumb"+i+".jpg",
+desc:"Koleksi Video "+i
+});
+}
+
+let currentPage=1;
+const perPage=50;
+
+function renderPage(page){
+
+currentPage=page;
+
+let start=(page-1)*perPage;
+let end=start+perPage;
+
+let list=videos.slice(start,end);
+
+let grid=document.getElementById("videoGrid");
+
+grid.innerHTML="";
+
+list.forEach(v=>{
+
+    grid.innerHTML += `
+    <div class="card" onclick="openVideo('${v.file}','${v.title}','${v.desc}')">
+
+        <img src="${v.thumb}"
+             onerror="this.src='https://via.placeholder.com/300x450?text=Video'">
+
+        <div class="title">${v.title}</div>
+
+    </div>
+    `;
+
+});
+
+document.getElementById("pageInfo").innerText =
+    "Halaman "+page+" / "+Math.ceil(videos.length/perPage);
+
+}
+
+function prevPage(){
+
+if(currentPage>1){
+    renderPage(currentPage-1);
+}
+
+}
+
+function nextPage(){
+
+if(currentPage<Math.ceil(videos.length/perPage)){
+    renderPage(currentPage+1);
+}
+
+}
+
+function searchVideo(){
+
+let keyword=document
+    .getElementById("search")
+    .value
+    .toLowerCase();
+
+let hasil=videos.filter(v=>
+    v.title.toLowerCase().includes(keyword)
+);
+
+let grid=document.getElementById("videoGrid");
+
+grid.innerHTML="";
+
+hasil.slice(0,100).forEach(v=>{
+
+    grid.innerHTML += `
+    <div class="card" onclick="openVideo('${v.file}','${v.title}','${v.desc}')">
+
+        <img src="${v.thumb}"
+             onerror="this.src='https://via.placeholder.com/300x450?text=Video'">
+
+        <div class="title">${v.title}</div>
+
+    </div>
+    `;
+
+});
+
+}
+
+function openVideo(file,title,desc){
+
+document.getElementById("modalTitle").innerText=title;
+
+document.getElementById("modalDesc").innerText=desc;
+
+document.getElementById("modalVideo").src=file;
+
+document.getElementById("modal").style.display="block";
+
+}
+
+function closeVideo(){
+
+document.getElementById("modal").style.display="none";
+
+document.getElementById("modalVideo").pause();
+
+}
+
+function fullscreenVideo(){
+
+let v=document.getElementById("modalVideo");
+
+if(v.requestFullscreen){
+    v.requestFullscreen();
+}
+
+}
